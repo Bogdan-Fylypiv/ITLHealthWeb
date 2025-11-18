@@ -1,0 +1,401 @@
+/* ===================================
+   Orders Page Styles
+   =================================== */
+
+/* Main Container */
+.orders-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 25px;
+    border-bottom: 3px solid #0066cc;
+    padding-bottom: 15px;
+}
+
+.page-header h2 {
+    color: #0066cc;
+    margin: 0 0 10px 0;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+
+/* Message Label */
+.message-label {
+    display: block;
+    padding: 12px 15px;
+    margin-top: 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+.message-label.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-label.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message-label.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Filter Section */
+.filter-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.placeholder-text {
+    color: #6c757d;
+    font-style: italic;
+    padding: 10px;
+}
+
+/* Orders Grid Section */
+.orders-grid-section {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.orders-grid-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.grid-container {
+    overflow-x: auto;
+    min-height: 200px;
+}
+
+/* Summary Section */
+.summary-section {
+    background: linear-gradient(135deg, #e7f3ff 0%, #cfe7ff 100%);
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #b3d9ff;
+    box-shadow: 0 2px 4px rgba(0,102,204,0.1);
+}
+
+.summary-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #004085;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.summary-text {
+    display: block;
+    font-size: 1.05em;
+    color: #004085;
+    line-height: 1.8;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .orders-container {
+        padding: 10px;
+    }
+    
+    .page-header h2 {
+        font-size: 1.4em;
+    }
+    
+    .filter-section,
+    .orders-grid-section,
+    .summary-section {
+        padding: 15px;
+    }
+    
+    .filter-section h3,
+    .orders-grid-section h3,
+    .summary-section h3 {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .orders-container {
+        padding: 5px;
+    }
+    
+    .page-header h2 {
+        font-size: 1.2em;
+    }
+}
+
+/* ===================================
+   Filter Controls Styles
+   =================================== */
+
+/* Filter Group Container */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 150px;
+}
+
+    .filter-group label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9em;
+        margin-bottom: 2px;
+    }
+
+/* Form Controls */
+.form-control {
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-family: inherit;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0066cc;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    .form-control:disabled {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
+
+.date-picker {
+    min-width: 160px;
+    cursor: pointer;
+}
+
+/* Button Styles */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 22px; /* Align with inputs that have labels */
+    white-space: nowrap;
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+.btn-primary {
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    color: white;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+    }
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+    color: white;
+}
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #545b62 0%, #3d4349 100%);
+    }
+
+/* Responsive Filters */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .btn {
+        margin-top: 0;
+        width: 100%;
+    }
+
+    .date-picker {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-section {
+        padding: 15px;
+    }
+
+    .filter-group label {
+        font-size: 0.85em;
+    }
+
+    .form-control,
+    .btn {
+        font-size: 0.9em;
+        padding: 8px 10px;
+    }
+}
+
+/* ===================================
+   GridView Styles
+   =================================== */
+
+.orders-grid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+    .orders-grid th {
+        padding: 12px 15px !important;
+        text-align: left;
+        white-space: nowrap;
+        font-weight: 600;
+        border-right: 1px solid #dee2e6;
+    }
+
+    .orders-grid td {
+        padding: 10px 15px !important;
+        border-bottom: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    .orders-grid tr:hover {
+        background-color: #e6f2ff !important;
+        cursor: pointer;
+    }
+
+/* Track Link */
+.track-link {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+    .track-link:hover {
+        background-color: #0066cc;
+        color: white;
+        text-decoration: none;
+    }
+
+/* Empty Data Message */
+.orders-grid td[colspan] {
+    text-align: center;
+    padding: 30px;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+/* Pager Styles */
+.orders-grid .pager {
+    padding: 10px;
+}
+
+    .orders-grid .pager a {
+        color: white;
+        padding: 5px 10px;
+        margin: 0 2px;
+        text-decoration: none;
+        border-radius: 3px;
+    }
+
+        .orders-grid .pager a:hover {
+            background-color: #0052a3;
+        }
+
+    .orders-grid .pager span {
+        color: white;
+        padding: 5px 10px;
+        margin: 0 2px;
+        background-color: #0052a3;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+
+/* Responsive Grid */
+@media (max-width: 1200px) {
+    .orders-grid {
+        font-size: 0.85em;
+    }
+
+        .orders-grid th,
+        .orders-grid td {
+            padding: 10px 12px !important;
+        }
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .orders-grid {
+        min-width: 1000px;
+    }
+}
