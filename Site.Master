@@ -1,0 +1,54 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="ITLHealthWeb.SiteMaster" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - ITL Health Order Tracking</title>
+    
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <!-- Header -->
+        <header class="site-header">
+            <div class="header-content">
+                <h1 class="site-title">ITL Health Order Tracking</h1>
+                <div class="user-info" runat="server" id="UserInfoPanel" visible="false">
+                    <span class="user-name">
+                        Welcome, <asp:Label ID="LblUsername" runat="server" />
+                    </span>
+                    <asp:Button ID="BtnLogout" runat="server" Text="Logout" CssClass="btn btn-logout" OnClick="BtnLogout_Click" />
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="main-nav" runat="server" id="MainNav" visible="false">
+            <div class="nav-content">
+                <ul class="nav-menu">
+                    <li><a href="~/Pages/Orders.aspx" runat="server">Orders</a></li>
+                    <li><a href="~/Pages/Tracking.aspx" runat="server">Tracking</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p>&copy; <%: DateTime.Now.Year %> - ITL Health. All rights reserved.</p>
+            </div>
+        </footer>
+    </form>
+</body>
+</html>

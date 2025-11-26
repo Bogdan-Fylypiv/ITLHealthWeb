@@ -1,0 +1,13 @@
+# Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+
+# NuGet packages (will be restored)
+packages/
+
+# Keep lib folder with dependencies
+!lib/
