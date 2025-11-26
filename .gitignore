@@ -9,5 +9,8 @@ obj/
 # NuGet packages (will be restored)
 packages/
 
+# Documentation folder
+Docs/
+
 # Keep lib folder with dependencies
 !lib/
