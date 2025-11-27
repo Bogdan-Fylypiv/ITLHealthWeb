@@ -35,14 +35,15 @@ namespace ITLHealthWeb.Pages
                // Get tracking number from query string
                _sTrackingNumber = Request.QueryString["trackingNo"];
 
-               if (string.IsNullOrEmpty(_sTrackingNumber))
-               {
-                  ShowMessage("No tracking number provided.", "error");
-                  return;
-               }
-
                // Initialize data tables
                InitializeDataTables();
+
+               if (string.IsNullOrEmpty(_sTrackingNumber))
+               {
+                  // Load mock data for demo
+                  LoadMockData();
+                  return;
+               }
 
                // Initialize Scan object for carrier API calls
                //_Scan = new SID.Classes.Scan(System.Windows.Forms.Cursors.Default);
@@ -257,6 +258,37 @@ namespace ITLHealthWeb.Pages
          LblMessage.Text = message;
          LblMessage.CssClass = $"message-label {type}";
          LblMessage.Visible = true;
+      }
+
+      /// <summary>
+      /// Load mock tracking data for demo purposes
+      /// Based on screenshot from frmTracking.cs
+      /// </summary>
+      private void LoadMockData()
+      {
+         // Set tracking information fields
+         TxtTrackingNo.Text = "D42510139000001525001";
+         TxtShipperAcctNo.Text = "";
+         TxtServiceType.Text = "GROUND";
+         TxtDeliveryDate.Text = "04-Nov-2025";
+         TxtStatus.Text = "Departing sort facility";
+         TxtPO.Text = "#1773ITL-NA";
+         TxtOrderID.Text = "1 - 251021030016 CA1211M";
+         TxtShipToAddress.Text = "";
+         TxtLastLocation.Text = "Departing sort facility";
+
+         // Set button text for CanPar
+         BtnWebSite.Text = "CanPar Website";
+         _iDelMode = 2048; // CanPar
+
+         // Add mock tracking activity
+         _dtItems.Rows.Add(1, "D42510139000001525001", "Departing sort facility", DateTime.Parse("2025-10-30 12:00"), "");
+
+         // Bind to grid
+         GvActivity.DataSource = _dtItems;
+         GvActivity.DataBind();
+
+         ShowMessage("Mock tracking data loaded for demo", "info");
       }
    }
 }

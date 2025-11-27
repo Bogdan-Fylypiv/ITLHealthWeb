@@ -12,79 +12,84 @@
     <div class="tracking-container">
         <!-- Page Header -->
         <div class="page-header">
-            <h2> Package Tracking</h2>
+            <h2>Tracking Form</h2>
             <asp:Label ID="LblMessage" runat="server" CssClass="message-label"></asp:Label>
         </div>
         
-        <!-- Tracking Information Section -->
-        <div class="tracking-info-section">
-            <div class="info-row">
-                <div class="info-group">
-                    <label>Tracking Number:</label>
-                    <asp:TextBox ID="TxtTrackingNo" runat="server" ReadOnly="true" 
-                        CssClass="form-control" />
+        <!-- Main Content Area: Info on Left, Buttons on Right -->
+        <div class="tracking-main-content">
+            <!-- Left Column: Tracking Information -->
+            <div class="tracking-info-section">
+                <div class="info-grid">
+                    <div class="info-row">
+                        <label class="info-label">Lead TrackingNo</label>
+                        <asp:TextBox ID="TxtTrackingNo" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly" />
+                    </div>
+                    
+                    <div class="info-row">
+                        <label class="info-label">Shiper Acct No</label>
+                        <asp:TextBox ID="TxtShipperAcctNo" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly" />
+                    </div>
+                    
+                    <div class="info-row">
+                        <label class="info-label">Service Type</label>
+                        <asp:TextBox ID="TxtServiceType" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly" />
+                    </div>
+                    
+                    <div class="info-row">
+                        <label class="info-label">Est Delivery Date</label>
+                        <asp:TextBox ID="TxtDeliveryDate" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly" />
+                    </div>
+                    
+                    <div class="info-row">
+                        <label class="info-label">Status</label>
+                        <asp:TextBox ID="TxtStatus" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly status-field" />
+                    </div>
+                    
+                    <div class="info-row">
+                        <label class="info-label">PO</label>
+                        <asp:TextBox ID="TxtPO" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly" />
+                    </div>
+                    
+                    <div class="info-row">
+                        <label class="info-label">Refl - OrderID</label>
+                        <asp:TextBox ID="TxtOrderID" runat="server" ReadOnly="true" 
+                            CssClass="form-control-readonly" />
+                    </div>
                 </div>
                 
-                <div class="info-group">
-                    <label>Service Type:</label>
-                    <asp:TextBox ID="TxtServiceType" runat="server" ReadOnly="true" 
-                        CssClass="form-control" />
-                </div>
-                
-                <div class="info-group">
-                    <label>Status:</label>
-                    <asp:TextBox ID="TxtStatus" runat="server" ReadOnly="true" 
-                        CssClass="form-control status-field" />
-                </div>
-            </div>
-            
-            <div class="info-row">
-                <div class="info-group">
-                    <label>Delivery Date:</label>
-                    <asp:TextBox ID="TxtDeliveryDate" runat="server" ReadOnly="true" 
-                        CssClass="form-control" />
-                </div>
-                
-                <div class="info-group">
-                    <label>Order ID:</label>
-                    <asp:TextBox ID="TxtOrderID" runat="server" ReadOnly="true" 
-                        CssClass="form-control" />
-                </div>
-                
-                <div class="info-group">
-                    <label>PO Number:</label>
-                    <asp:TextBox ID="TxtPO" runat="server" ReadOnly="true" 
-                        CssClass="form-control" />
-                </div>
-            </div>
-            
-            <div class="info-row">
-                <div class="info-group full-width">
-                    <label>Ship To Address:</label>
+                <!-- Ship To Address Section -->
+                <div class="address-section">
+                    <label class="info-label">Ship To Address</label>
                     <asp:TextBox ID="TxtShipToAddress" runat="server" ReadOnly="true" 
-                        TextMode="MultiLine" Rows="3" CssClass="form-control" />
+                        TextMode="MultiLine" Rows="3" CssClass="form-control-readonly address-box" />
                 </div>
-            </div>
-            
-            <div class="info-row">
-                <div class="info-group full-width">
-                    <label>Last Location:</label>
+                
+                <!-- Last Location Section -->
+                <div class="address-section">
+                    <label class="info-label">Last</label>
                     <asp:TextBox ID="TxtLastLocation" runat="server" ReadOnly="true" 
-                        TextMode="MultiLine" Rows="2" CssClass="form-control" />
+                        TextMode="MultiLine" Rows="2" CssClass="form-control-readonly address-box" />
                 </div>
             </div>
             
-            <div class="info-row">
-                <div class="info-group">
-                    <asp:Button ID="BtnWebSite" runat="server" 
-                        Text="View on Carrier Website" 
-                        OnClick="BtnWebSite_Click" 
-                        CssClass="btn btn-primary" />
-                    <asp:Button ID="BtnClose" runat="server" 
-                        Text="Close" 
-                        OnClientClick="window.close(); return false;" 
-                        CssClass="btn btn-secondary" />
-                </div>
+            <!-- Right Column: Action Buttons -->
+            <div class="tracking-actions">
+                <asp:Button ID="BtnWebSite" runat="server" 
+                    Text="CanPar Website" 
+                    OnClick="BtnWebSite_Click" 
+                    CssClass="btn btn-carrier" />
+                
+                <asp:Button ID="BtnExit" runat="server" 
+                    Text="Exit" 
+                    OnClientClick="window.close(); return false;" 
+                    CssClass="btn btn-exit" />
             </div>
         </div>
         

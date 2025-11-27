@@ -42,6 +42,15 @@ namespace ITLHealthWeb.Pages
       protected global::System.Web.UI.WebControls.TextBox TxtTrackingNo;
 
       /// <summary>
+      /// TxtShipperAcctNo control.
+      /// </summary>
+      /// <remarks>
+      /// Auto-generated field.
+      /// To modify move field declaration from designer file to code-behind file.
+      /// </remarks>
+      protected global::System.Web.UI.WebControls.TextBox TxtShipperAcctNo;
+
+      /// <summary>
       /// TxtServiceType control.
       /// </summary>
       /// <remarks>
@@ -114,13 +123,13 @@ namespace ITLHealthWeb.Pages
       protected global::System.Web.UI.WebControls.Button BtnWebSite;
 
       /// <summary>
-      /// BtnClose control.
+      /// BtnExit control.
       /// </summary>
       /// <remarks>
       /// Auto-generated field.
       /// To modify move field declaration from designer file to code-behind file.
       /// </remarks>
-      protected global::System.Web.UI.WebControls.Button BtnClose;
+      protected global::System.Web.UI.WebControls.Button BtnExit;
 
       /// <summary>
       /// GvActivity control.
