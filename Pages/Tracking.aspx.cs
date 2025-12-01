@@ -1,10 +1,12 @@
 ﻿//using SID.CanparTracking;
 //using SID.Classes;
-//using SID.FedExRest.Models;
 //using SID.PurolatorTrackingSvc;
-//using SID.UPSRestful;
-//using SID.UPSRestful.Models;
+using ITLHealthWeb.UPSRestful;
+using ITLHealthWeb.UPSRestful.Models;
+using ITLHealthWeb.FedExRest;
+using ITLHealthWeb.FedExRest.Models;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
@@ -194,8 +196,312 @@ namespace ITLHealthWeb.Pages
       // See frmTracking.cs lines 319-381 for GetPurolatorTrackInfo implementation
       // See frmTracking.cs lines 413-503 for GetCanparTrackInfo implementation
 
-      private void GetUPSTrackInfo() { /* Implement from frmTracking.cs lines 664-794 */ }
-      private void GetFedExTrackInfo(DataTable dt) { /* Implement from frmTracking.cs lines 529-662 */ }
+      /// <summary>
+      /// Get UPS tracking information
+      /// Based on frmTracking.cs lines 664-794
+      /// </summary>
+      private void GetUPSTrackInfo()
+      {
+         DataRow dr;
+         try
+         {
+            UPSWeb ups = new UPSWeb(_iBusID, _iSiteID);
+            object response = ups.UPSGetTrackingInfo(_gOrdID.ToString(), _sTrackingNumber);
+            
+            if (response is UPSTrackingInfoResponseModel res)
+            {
+               TrackShipment rspShipment = res.TrackResponse.Shipment[0];
+               TxtTrackingNo.Text = rspShipment.InquiryNumber;
+               TxtShipperAcctNo.Text = ups.AccountNo;
+               TxtServiceType.Text = rspShipment.Package[0].Service.Description;
+               
+               // Set last location
+               if (rspShipment.Package[0].DeliveryInformation != null && 
+                   rspShipment.Package[0].DeliveryInformation.ReceivedBy != null)
+               {
+                  TxtLastLocation.Text = "Signed by " + rspShipment.Package[0].DeliveryInformation.ReceivedBy + "\r\n";
+               }
+               else
+               {
+                  TxtLastLocation.Text = rspShipment.Package[0].Activity[0].Location.Address.City + " "
+                     + rspShipment.Package[0].Activity[0].Location.Address.StateProvince + " "
+                     + (rspShipment.Package[0].Activity[0].Location.Address.CountryCode ?? 
+                        rspShipment.Package[0].Activity[0].Location.Address.Country);
+               }
+               
+               // Set status
+               TxtStatus.Text = rspShipment.Package[0].Activity[0].Status.Description;
+               
+               // Set PO and Order ID from reference numbers
+               if (rspShipment.Package.Count > 0 && rspShipment.Package[0].ReferenceNumber != null)
+               {
+                  if (rspShipment.Package.Count == 1)
+                  {
+                     TxtOrderID.Text = rspShipment.Package[0].ReferenceNumber[0].Number;
+                  }
+                  else
+                  {
+                     TxtPO.Text = rspShipment.Package[0].ReferenceNumber[0].Number;
+                  }
+               }
+               else
+               {
+                  TxtPO.Text = "";
+               }
+               
+               if (rspShipment.Package.Count > 1 && rspShipment.Package[1].ReferenceNumber != null)
+               {
+                  TxtOrderID.Text = rspShipment.Package[0].ReferenceNumber[1].Number;
+                  if (TxtOrderID.Text.Equals(TxtPO.Text))
+                  {
+                     TxtPO.Text = "";
+                  }
+               }
+               
+               // Set delivery date
+               if (rspShipment.Package[0].DeliveryTime == null)
+               {
+                  string dateStr = rspShipment.Package[0].Activity[0].Date;
+                  string timeStr = rspShipment.Package[0].Activity[0].Time;
+                  DateTime activityDate = DateTime.Parse($"{dateStr.Substring(0, 4)}-{dateStr.Substring(4, 2)}-{dateStr.Substring(6, 2)} " +
+                     $"{timeStr.Substring(0, 2)}:{timeStr.Substring(2, 2)}:{timeStr.Substring(4, 2)}");
+                  TxtDeliveryDate.Text = activityDate.ToString("dd-MMM-yyyy");
+               }
+               else
+               {
+                  string dateStr = rspShipment.Package[0].DeliveryDate[0].Date;
+                  string timeStr = rspShipment.Package[0].DeliveryTime.EndTime;
+                  DateTime deliveryDate = DateTime.Parse($"{dateStr.Substring(0, 4)}-{dateStr.Substring(4, 2)}-{dateStr.Substring(6, 2)} " +
+                     $"{timeStr.Substring(0, 2)}:{timeStr.Substring(2, 2)}:{timeStr.Substring(4, 2)}");
+                  TxtDeliveryDate.Text = deliveryDate.ToString("dd-MMM-yyyy");
+               }
+               
+               // Set ship to address
+               int iShipmentAddressCnt = rspShipment.Package[0].PackageAddress.Count;
+               PackageAddress shpAddress = rspShipment.Package[0].PackageAddress[iShipmentAddressCnt - 1];
+               
+               if (shpAddress.Address.AddressLine1 != null && shpAddress.Address.AddressLine1.Length > 0)
+               {
+                  TxtShipToAddress.Text += $"{shpAddress.Address.AddressLine1}\r\n";
+               }
+               if (shpAddress.Address.AddressLine2 != null && shpAddress.Address.AddressLine2.Length > 0)
+               {
+                  TxtShipToAddress.Text += $"{shpAddress.Address.AddressLine2}\r\n";
+               }
+               if (shpAddress.Address.AddressLine3 != null && shpAddress.Address.AddressLine3.Length > 0)
+               {
+                  TxtShipToAddress.Text += $"{shpAddress.Address.AddressLine3}\r\n";
+               }
+               
+               TxtShipToAddress.Text += shpAddress.Address.City
+                  + " " + shpAddress.Address.StateProvince
+                  + " " + shpAddress.Address.PostalCode
+                  + " " + shpAddress.Address.Country;
+               
+               // Build tracking activity grid
+               int j = 0;
+               int k = 0;
+               foreach (TrackPackage pkg in rspShipment.Package)
+               {
+                  j++;
+                  dr = _dtTrack.NewRow();
+                  dr["ID"] = j.ToString();
+                  dr["TrackingNo"] = pkg.TrackingNumber;
+                  dr["Status"] = pkg.Activity[0].Status.Description ?? "";
+                  string pkgDateStr = pkg.Activity[0].Date;
+                  string pkgTimeStr = pkg.Activity[0].Time;
+                  dr["ActivityDate"] = DateTime.Parse($"{pkgDateStr.Substring(0, 4)}-{pkgDateStr.Substring(4, 2)}-{pkgDateStr.Substring(6, 2)} " +
+                     $"{pkgTimeStr.Substring(0, 2)}:{pkgTimeStr.Substring(2, 2)}:{pkgTimeStr.Substring(4, 2)}");
+                  dr["Notes"] = "";
+                  dr["Level"] = 0;
+                  _dtTrack.Rows.Add(dr);
+                  
+                  foreach (TrackActivity item in pkg.Activity)
+                  {
+                     k++;
+                     dr = _dtItems.NewRow();
+                     dr["ID"] = k;
+                     dr["TrackingNo"] = pkg.TrackingNumber;
+                     dr["Status"] = item.Status.Description;
+                     string itemDateStr = item.Date;
+                     string itemTimeStr = item.Time;
+                     dr["ActivityDate"] = DateTime.Parse($"{itemDateStr.Substring(0, 4)}-{itemDateStr.Substring(4, 2)}-{itemDateStr.Substring(6, 2)} " +
+                        $"{itemTimeStr.Substring(0, 2)}:{itemTimeStr.Substring(2, 2)}:{itemTimeStr.Substring(4, 2)}");
+                     dr["Notes"] = "";
+                     dr["Level"] = 1;
+                     _dtItems.Rows.Add(dr);
+                  }
+               }
+            }
+            else
+            {
+               TxtStatus.Text = "Invalid UPS Tracking Number";
+               ShowMessage("Invalid UPS Tracking Number", "error");
+               return;
+            }
+         }
+         catch (Exception ex)
+         {
+            ShowMessage($"Error getting UPS tracking info: {ex.Message}", "error");
+            System.Diagnostics.Debug.WriteLine($"GetUPSTrackInfo Error: {ex.Message}");
+         }
+      }
+      /// <summary>
+      /// Get FedEx tracking information
+      /// Based on frmTracking.cs lines 529-662
+      /// </summary>
+      private void GetFedExTrackInfo(DataTable dt)
+      {
+         DataRow dr;
+         try
+         {
+            if (dt.Rows.Count == 0)
+            {
+               return;
+            }
+            
+            dr = dt.Rows[0];
+            
+            // Determine carrier code based on service type
+            string sCarrierCode = "";
+            if (dr["ServiceType"].ToString() == "FEDEX_GROUND")
+            {
+               sCarrierCode = "FDXG";
+            }
+            else
+            {
+               sCarrierCode = "FDXE";
+            }
+            
+            // Call FedEx tracking API
+            FedExWeb fedex = new FedExWeb(_iBusID, _iSiteID);
+            object Res = fedex.GetTrackingByTrackingNumberRequest(
+               _sTrackingNumber, 
+               sCarrierCode, 
+               Convert.ToDateTime(dr["dtmCreate"]), 
+               dr["PONumber"].ToString()
+            );
+            
+            if (Res is FedExTrackingResponse rsp)
+            {
+               TrackResult trackResult = rsp.Output.CompleteTrackResults[0].TrackResults[0];
+               
+               // Set shipper account (carrier code)
+               TxtShipperAcctNo.Text = trackResult.TrackingNumberInfo.CarrierCode;
+               
+               // Set service type
+               if (trackResult.ServiceDetail != null)
+               {
+                  TxtServiceType.Text = trackResult.ServiceDetail.Description;
+               }
+               else
+               {
+                  TxtServiceType.Text = dt.Rows[0]["ServiceType"].ToString();
+               }
+               
+               // Set PO number
+               TxtPO.Text = rsp.CustomerTransactionId ?? dr["PONumber"].ToString();
+               
+               // Set status
+               TxtStatus.Text = trackResult.LatestStatusDetail.Description;
+               
+               // Set delivery date
+               if (trackResult.DateAndTimes != null)
+               {
+                  foreach (DateAndTime dtm in trackResult.DateAndTimes)
+                  {
+                     if (dtm.Type == "ACTUAL_DELIVERY")
+                     {
+                        TxtDeliveryDate.Text = dtm.DateTimeVal.ToString("dd-MMM-yyyy hh:mm");
+                        break;
+                     }
+                     else if (dtm.Type == "ESTIMATED_DELIVERY")
+                     {
+                        TxtDeliveryDate.Text = dtm.DateTimeVal.ToString("dd-MMM-yyyy hh:mm");
+                        break;
+                     }
+                     else
+                     {
+                        TxtDeliveryDate.Text = "Unknown";
+                     }
+                  }
+               }
+               
+               // Set last location
+               if (trackResult.DeliveryDetails != null && 
+                   trackResult.DeliveryDetails.SignedByName != null)
+               {
+                  TxtLastLocation.Text = "Signed by " + trackResult.DeliveryDetails.SignedByName + "\r\n";
+               }
+               else
+               {
+                  TxtLastLocation.Text = trackResult.LastUpdatedDestinationAddress.City + " "
+                     + trackResult.LastUpdatedDestinationAddress.StateOrProvinceCode + " "
+                     + trackResult.LastUpdatedDestinationAddress.CountryCode;
+               }
+               
+               // Set ship to address
+               if (trackResult.ScanEvents != null && trackResult.ScanEvents.Count != 0)
+               {
+                  if (trackResult.DeliveryDetails != null && 
+                      trackResult.DeliveryDetails.ActualDeliveryAddress != null)
+                  {
+                     TxtShipToAddress.Text = trackResult.DeliveryDetails.ActualDeliveryAddress.City
+                        + " " + trackResult.DeliveryDetails.ActualDeliveryAddress.StateOrProvinceCode
+                        + " " + trackResult.DeliveryDetails.ActualDeliveryAddress.PostalCode
+                        + " " + trackResult.DeliveryDetails.ActualDeliveryAddress.CountryCode;
+                  }
+                  else if (trackResult.RecipientInformation != null)
+                  {
+                     TxtShipToAddress.Text = trackResult.RecipientInformation.Address.City
+                        + " " + trackResult.RecipientInformation.Address.StateOrProvinceCode
+                        + " " + trackResult.RecipientInformation.Address.PostalCode
+                        + " " + trackResult.RecipientInformation.Address.CountryCode;
+                  }
+                  
+                  // Build tracking activity grid
+                  foreach (TrackResult track in rsp.Output.CompleteTrackResults[0].TrackResults)
+                  {
+                     dr = _dtTrack.NewRow();
+                     dr["ID"] = int.Parse(track.PackageDetails.SequenceNumber);
+                     dr["TrackingNo"] = track.TrackingNumberInfo.TrackingNumber;
+                     dr["Status"] = track.LatestStatusDetail.Description ?? "";
+                     if (track.DateAndTimes != null && track.DateAndTimes.Count > 0)
+                     {
+                        dr["ActivityDate"] = track.DateAndTimes[0].DateTimeVal;
+                     }
+                     dr["Notes"] = "";
+                     dr["Level"] = 0;
+                     _dtTrack.Rows.Add(dr);
+                     
+                     // Add scan events (reverse order - newest first)
+                     int y = track.ScanEvents.Count;
+                     foreach (ScanEvent evnt in track.ScanEvents)
+                     {
+                        dr = _dtItems.NewRow();
+                        dr["ID"] = y;
+                        dr["TrackingNo"] = track.TrackingNumberInfo.TrackingNumber;
+                        dr["Status"] = evnt.EventDescription;
+                        dr["ActivityDate"] = evnt.DateOf;
+                        dr["Notes"] = "";
+                        dr["Level"] = 1;
+                        _dtItems.Rows.Add(dr);
+                        y--;
+                     }
+                  }
+               }
+            }
+            else
+            {
+               ShowMessage("Error in GetFedExTrackInfo", "error");
+            }
+         }
+         catch (Exception ex)
+         {
+            ShowMessage($"Error getting FedEx tracking info: {ex.Message}", "error");
+            System.Diagnostics.Debug.WriteLine($"GetFedExTrackInfo Error: {ex.Message}");
+         }
+      }
       private void GetPurolatorTrackInfo(DataTable dt) { /* Implement from frmTracking.cs lines 319-381 */ }
       private void GetCanparTrackInfo(DataTable dt) { /* Implement from frmTracking.cs lines 413-503 */ }
       private void GetCaPostTrackInfo(string sTrackingNumber, int iBusID, int iSiteID, int iDelmode) { }

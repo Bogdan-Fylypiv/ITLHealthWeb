@@ -128,7 +128,7 @@
                             <asp:TemplateField HeaderText="Actions" ItemStyle-Width="80px" ItemStyle-HorizontalAlign="Center">
                                 <ItemTemplate>
                                     <asp:HyperLink ID="LnkTrack" runat="server" 
-                                        Text="🔍 Track" 
+                                        Text="Track" 
                                         NavigateUrl='<%# "~/Pages/Tracking.aspx?trackingNo=" + Server.UrlEncode(Eval("TrackingNo").ToString()) %>'
                                         Target="_blank"
                                         CssClass="track-link"

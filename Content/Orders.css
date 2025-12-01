@@ -487,10 +487,14 @@
         margin: 0 2px;
         text-decoration: none;
         border-radius: 3px;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
         .orders-grid .pager a:hover {
-            background-color: #0052a3;
+            text-decoration: underline;
+            transform: translateY(-1px);
         }
 
     .orders-grid .pager span {
@@ -500,6 +504,7 @@
         background-color: #0052a3;
         border-radius: 3px;
         font-weight: bold;
+        display: inline-block;
     }
 
 /* Responsive Grid */
